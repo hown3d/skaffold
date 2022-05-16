@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "skaffold-buildah"
+  namespace: default
+spec:
+  containers:
+  - name: skaffold-buildah
+    image: buildah-example:latest
+    imagePullPolicy: IfNotPresent
+  restartPolicy: Always

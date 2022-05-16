@@ -6,12 +6,13 @@ import (
 
 	"github.com/GoogleContainerTools/skaffold/pkg/skaffold/docker"
 	latestV1 "github.com/GoogleContainerTools/skaffold/pkg/skaffold/schema/latest"
+	registryV1 "github.com/google/go-containerregistry/pkg/v1"
 )
 
 // GetDependencies finds the sources dependency for the given buildah artifact.
 // All paths are relative to the workspace.
 func GetDependencies(ctx context.Context, workspace string, a *latestV1.BuildahArtifact, cfg docker.Config) ([]string, error) {
-	containerfile, err := docker.NormalizeDockerfilePath(workspace, a.ContainerFilePath)
+	containerfile, err := getDockerfilePath(workspace, a.DockerfilePath)
 	if err != nil {
 		return nil, fmt.Errorf("normalizing containerfile path: %w", err)
 	}
@@ -21,6 +22,23 @@ func GetDependencies(ctx context.Context, workspace string, a *latestV1.BuildahA
 		val := val
 		newVal := &val
 		buildArgs[key] = newVal
+	}
+
+	// override RetrieveImage func since we can't use the docker daemon
+	docker.RetrieveImage = func(ctx context.Context, image string, cfg docker.Config) (*registryV1.ConfigFile, error) {
+		buildStore, err := newBuildStore()
+		if err != nil {
+			return nil, fmt.Errorf("creating buildah store: %w", err)
+		}
+		runtime, err := runtimeFromStore(buildStore)
+		if err != nil {
+			return nil, err
+		}
+		data, err := inspectImage(ctx, runtime, image)
+		if err != nil {
+			return nil, err
+		}
+		return libImageDataToRegistryConfigFile(data)
 	}
 
 	fts, err := docker.ReadCopyCmdsFromDockerfile(ctx, false, containerfile, workspace, buildArgs, cfg)

@@ -148,6 +148,7 @@ func sourceDependenciesForArtifact(ctx context.Context, a *latest.Artifact, cfg 
 
 	case a.KoArtifact != nil:
 		paths, err = ko.GetDependencies(ctx, a.Workspace, a.KoArtifact)
+
 	case a.BuildahArtifact != nil:
 		paths, err = buildah.GetDependencies(ctx, a.Workspace, a.BuildahArtifact, cfg)
 

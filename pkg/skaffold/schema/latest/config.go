@@ -1366,8 +1366,8 @@ type BuildahArtifact struct {
 	// NoCache used to prevent buildah from caching
 	NoCache bool `yaml:"noCache,omitempty"`
 
-	// locates the Containerfile relative to workspace.
-	ContainerFilePath string `yaml:"containerfile,omitempty"`
+	// locates the Dockerfile relative to workspace.
+	DockerfilePath string `yaml:"containerfile,omitempty"`
 
 	// BuildArgs are key/value pairs used to resolve values of `ARG` instructions in a Containerfile.
 	// Values can be constants or environment variables via the go template syntax.
@@ -1382,16 +1382,19 @@ type BuildahArtifact struct {
 
 	// Compression to use when building the container image
 	// Valid Compression Algorithms are: gzip, bzip2, xz and zstd
-	// Defaults to uncompressed
+	// Defaults to gzip
 	Compression string `yaml:"compression,omitempty"`
 
 	// Format to use when building the container image
-	// Valid Formats are: oci and docker
-	// Defaults to oci
+	// Valid Formats are: OCI and docker
+	// Defaults to OCI
 	Format string `yaml:"format,omitempty"`
 
 	// Secrets defines secret files to expose to the build
 	Secrets []string `yaml:"secrets,omitempty"`
+
+	// For example: `["host1:ip1", "host2:ip2"]`.
+	AddHost []string `yaml:"addHost,omitempty"`
 }
 
 // BazelArtifact describes an artifact built with [Bazel](https://bazel.build/).

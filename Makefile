@@ -71,6 +71,9 @@ ifneq "$(strip $(LOCAL))" "true"
 endif
 
 # when build for local development (`LOCAL=true make install` can skip license check)
+# TODO(hown3d): on some devices, compiling with devmapper and btrfs can crash.
+# Exclude these by specifying these additional tags: "exclude_graphdriver_devicemapper exclude_graphdriver_btrfs"
+# `make install GO_BUILD_TAGS_linux+="exclude_graphdriver_devicemapper exclude_graphdriver_btrfs"`
 $(BUILD_DIR)/$(PROJECT): $(EMBEDDED_FILES_CHECK) $(GO_FILES) $(BUILD_DIR)
 	$(eval ldflags = $(GO_LDFLAGS) $(patsubst %,-extldflags \"%\",$(LDFLAGS_$(GOOS))))
 	$(eval tags = $(GO_BUILD_TAGS_$(GOOS)) $(GO_BUILD_TAGS_$(GOOS)_$(GOARCH)))

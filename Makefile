@@ -59,8 +59,10 @@ GO_LDFLAGS += -X $(VERSION_PACKAGE).buildDate=$(BUILD_DATE)
 GO_LDFLAGS += -X $(VERSION_PACKAGE).gitCommit=$(COMMIT)
 GO_LDFLAGS += -s -w
 
-GO_BUILD_TAGS_linux = osusergo netgo static_build release
-LDFLAGS_linux = -static
+
+GO_BUILD_TAGS_linux = osusergo netgo static_build release exclude_graphdriver_devicemapper exclude_graphdriver_btrfs
+# todo(hown3d): currently not able to build with static on my environment: ld fails to link gpgme, assuan and gpg-error lib
+#LDFLAGS_linux = -static
 
 GO_BUILD_TAGS_windows = release
 
@@ -71,9 +73,6 @@ ifneq "$(strip $(LOCAL))" "true"
 endif
 
 # when build for local development (`LOCAL=true make install` can skip license check)
-# TODO(hown3d): on some devices, compiling with devmapper and btrfs can crash.
-# Exclude these by specifying these additional tags: "exclude_graphdriver_devicemapper exclude_graphdriver_btrfs"
-# `make install GO_BUILD_TAGS_linux+="exclude_graphdriver_devicemapper exclude_graphdriver_btrfs"`
 $(BUILD_DIR)/$(PROJECT): $(EMBEDDED_FILES_CHECK) $(GO_FILES) $(BUILD_DIR)
 	$(eval ldflags = $(GO_LDFLAGS) $(patsubst %,-extldflags \"%\",$(LDFLAGS_$(GOOS))))
 	$(eval tags = $(GO_BUILD_TAGS_$(GOOS)) $(GO_BUILD_TAGS_$(GOOS)_$(GOARCH)))

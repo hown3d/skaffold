@@ -1,13 +1,13 @@
-apiVersion: skaffold/v2beta27
+apiVersion: skaffold/v3alpha1
 kind: Config
 metadata:
   name: skaffold-buildah
 build:
   artifacts:
   - image: buildah-example
-    context: ./examples/buildah
+    context: .
     buildah:
-      containerfile: Dockerfile
+      dockerfile: Dockerfile
       compression: "gzip"
   local:
     push: false

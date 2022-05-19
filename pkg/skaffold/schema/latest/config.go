@@ -1367,7 +1367,7 @@ type BuildahArtifact struct {
 	NoCache bool `yaml:"noCache,omitempty"`
 
 	// locates the Dockerfile relative to workspace.
-	DockerfilePath string `yaml:"containerfile,omitempty"`
+	DockerfilePath string `yaml:"dockerfile,omitempty"`
 
 	// BuildArgs are key/value pairs used to resolve values of `ARG` instructions in a Containerfile.
 	// Values can be constants or environment variables via the go template syntax.

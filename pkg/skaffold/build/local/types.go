@@ -169,7 +169,7 @@ func newPerArtifactBuilder(b *Builder, a *latest.Artifact) (artifactBuilder, err
 		return ko.NewArtifactBuilder(b.localDocker, b.pushImages, b.mode, b.insecureRegistries), nil
 
 	case a.BuildahArtifact != nil:
-		return buildah.NewBuilder(b.pushImages, b.local.Concurrency)
+		return buildah.NewBuilder(*b.local.Concurrency, b.pushImages)
 
 	default:
 		return nil, fmt.Errorf("unexpected type %q for local artifact:\n%s", misc.ArtifactType(a), misc.FormatArtifact(a))

@@ -11,15 +11,15 @@ import (
 	"github.com/containers/storage"
 )
 
-func inspectImage(ctx context.Context, runtime *libimage.Runtime, image string) (*libimage.ImageData, error) {
-	img, _, err := runtime.LookupImage(image, nil)
+func (c Client) inspectImage(ctx context.Context, image string) (*libimage.ImageData, error) {
+	img, _, err := c.libImageRuntime.LookupImage(image, nil)
 	if err != nil {
 		if unwrapedError := errors.Unwrap(err); unwrapedError != nil {
 			err = unwrapedError
 		}
 		if errors.Is(err, storage.ErrImageUnknown) {
 			// try pulling if the image wasn't found
-			images, err := runtime.Pull(ctx, image, config.PullPolicyMissing, nil)
+			images, err := c.libImageRuntime.Pull(ctx, image, config.PullPolicyMissing, &libimage.PullOptions{})
 			if err != nil {
 				return nil, fmt.Errorf("image %v was not found locally and pulling was not successfull too: %w", image, err)
 			}
@@ -28,14 +28,14 @@ func inspectImage(ctx context.Context, runtime *libimage.Runtime, image string) 
 			return nil, fmt.Errorf("lookup image %v in store: %w", image, err)
 		}
 	}
-	data, err := img.Inspect(ctx, nil)
+	data, err := img.Inspect(ctx, &libimage.InspectOptions{})
 	if err != nil {
 		return nil, fmt.Errorf("inspecting image %v: %w", image, err)
 	}
 	return data, nil
 }
 
-func runtimeFromStore(store storage.Store) (*libimage.Runtime, error) {
+func libimageRuntimeFromStore(store storage.Store) (*libimage.Runtime, error) {
 	runtime, err := libimage.RuntimeFromStore(store, nil)
 	if err != nil {
 		return nil, fmt.Errorf("creating libimage runtime: %w", err)

@@ -6,7 +6,7 @@ import (
 	sErrors "github.com/GoogleContainerTools/skaffold/pkg/skaffold/errors"
 )
 
-func containerfileNotFound(err error, artifact string) error {
+func dockerfileNotFound(err error, artifact string) error {
 	return sErrors.NewError(err,
 		&proto.ActionableErr{
 			Message: err.Error(),

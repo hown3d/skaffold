@@ -24,20 +24,15 @@ import (
 	"cloud.google.com/go/profiler"
 
 	"github.com/GoogleContainerTools/skaffold/cmd/skaffold/app"
+	"github.com/GoogleContainerTools/skaffold/pkg/skaffold/buildah"
 	"github.com/GoogleContainerTools/skaffold/pkg/skaffold/instrumentation"
 	"github.com/GoogleContainerTools/skaffold/pkg/skaffold/output/log"
 	"github.com/GoogleContainerTools/skaffold/pkg/skaffold/version"
-	"github.com/containers/storage/pkg/reexec"
 )
 
 func main() {
-	// needed for buildah to
 	// todo(hown3d): maybe find a better spot in the code
-	if reexec.Init() {
-		// We were invoked with a different argv[0] indicating that we
-		// had a specific job to do as a subprocess, and it's done.
-		return
-	}
+	buildah.Reexec()
 
 	if _, ok := os.LookupEnv("SKAFFOLD_PROFILER"); ok {
 		err := profiler.Start(profiler.Config{

@@ -1,10 +1,12 @@
-FROM docker.io/library/golang:1.16-alpine as build
+FROM golang:1.16-alpine as build
 
 WORKDIR /app
 
-COPY *.go ./
+COPY go.mod app/
 
-RUN go build -o /buildah-example
+COPY *.go /app/
+
+RUN go build -o /buildah-example main.go
 
 FROM alpine
 

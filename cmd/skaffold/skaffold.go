@@ -24,15 +24,19 @@ import (
 	"cloud.google.com/go/profiler"
 
 	"github.com/GoogleContainerTools/skaffold/cmd/skaffold/app"
-	"github.com/GoogleContainerTools/skaffold/pkg/skaffold/buildah"
 	"github.com/GoogleContainerTools/skaffold/pkg/skaffold/instrumentation"
 	"github.com/GoogleContainerTools/skaffold/pkg/skaffold/output/log"
 	"github.com/GoogleContainerTools/skaffold/pkg/skaffold/version"
+	"github.com/containers/buildah"
 )
 
 func main() {
-	// todo(hown3d): maybe find a better spot in the code
-	buildah.Reexec()
+	// todo(hown3d): find a better place to only reexec when buildah is used
+	if buildah.InitReexec() {
+		return
+	}
+	// todo(hown3d): enable rootless mode
+	// unshare.MaybeReexecUsingUserNamespace(false)
 
 	if _, ok := os.LookupEnv("SKAFFOLD_PROFILER"); ok {
 		err := profiler.Start(profiler.Config{

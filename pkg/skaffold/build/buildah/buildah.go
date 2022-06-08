@@ -77,9 +77,7 @@ func (b *Builder) Build(ctx context.Context, out io.Writer, a *latestV1.Artifact
 			Secrets: a.BuildahArtifact.Secrets,
 			AddHost: a.BuildahArtifact.AddHost,
 		},
-		SystemContext: &types.SystemContext{
-
-		},
+		SystemContext:   &types.SystemContext{},
 		AddCapabilities: define.DefaultCapabilities,
 		AllPlatforms:    platforms.All,
 		Platforms:       buildahPlatforms,
@@ -91,7 +89,7 @@ func (b *Builder) Build(ctx context.Context, out io.Writer, a *latestV1.Artifact
 		return "", fmt.Errorf("building image %v: %w", a.ImageName, err)
 	}
 
-	log.Entry(ctx).Trace(fmt.Sprintf("built image %v with id %v", a.ImageName, id))
+	log.Entry(ctx).Tracef("built image %v with id %v", a.ImageName, id)
 
 	if b.pushImages {
 		ref, err = b.client.Push(ctx, id, a.ImageName, out)
@@ -100,7 +98,6 @@ func (b *Builder) Build(ctx context.Context, out io.Writer, a *latestV1.Artifact
 		}
 	}
 
-	log.Entry(ctx).Trace(fmt.Sprintf("id for image %v: %v", a.ImageName, id))
 	return ref.Name(), nil
 }
 

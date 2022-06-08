@@ -24,13 +24,6 @@ type Buildah interface {
 	GetConfigFile(ctx context.Context, imageName string) (*v1.ConfigFile, error)
 }
 
-func Reexec() {
-	if buildah.InitReexec() {
-		return
-	}
-	unshare.MaybeReexecUsingUserNamespace(false)
-}
-
 type Client struct {
 	buildStore      storage.Store
 	libImageRuntime *libimage.Runtime
